@@ -1,15 +1,66 @@
-- name: test set-version module
+- name: test
   hosts: localhost
-  connection: local
-
   tasks:
-    - debug:
-        msg: 'hi'
+  
+  - name: missing required params
+    gitsecret: {}
+    ignore_errors: yes
 
-    - name: test1
-      command: echo hi
+  - name: invalid argument
+    gitsecret:
+      action: hideyhidey
+      dir: /tmp/gitsectest
+    ignore_errors: yes
 
-    - name: test
-      set-version:
-        name: yo
-      register: a
+  - name: dir does not exist
+    gitsecret:
+      dir: /tmp/makebelieve
+      action: encrypt
+    ignore_errors: yes
+
+  - name: create folder for test
+    file:
+      path: /tmp/gitsecfaketest
+      state: directory
+      mode: '0755'
+
+  - name: encrypt in a non git secret dir
+    gitsecret:
+      action: encrypt
+      dir: /tmp/gitsecfaketest
+
+  #NOTE the following tests require a directory that has been preset:
+  # mkdir /tmp/gitsecret
+  # git init
+  # git secret init
+  # touch somefile
+  # git secret tell <email>
+  # touch .gitignore
+  # echo "somefile" >> .gitignore
+  # git secret add somefile
+
+  - name: checkmode encrypt
+    gitsecret:
+      action: encrypt
+      dir: /tmp/gitsectest
+      private_key: caleb_pri.gpg
+    check_mode: yes
+
+  - name: encrypt will wait for passphrase input (if passphrase has not been entered recently)
+    gitsecret:
+      action: encrypt
+      dir: /tmp/gitsectest
+      private_key: caleb_pri.gpg
+
+  - name: decrypt
+    gitsecret:
+      action: decrypt
+      dir: /tmp/gitsectest
+      private_key: caleb_pri.gpg
+
+  - name: encrypt (passphrase supplied via command)
+    gitsecret:
+      action: encrypt
+      dir: /tmp/gitsectest
+      private_key: caleb_pri.gpg
+      passphrase: '123qwe'

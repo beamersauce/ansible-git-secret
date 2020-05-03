@@ -60,8 +60,6 @@ message:
     returned: always
 '''
 
-import os
-
 from ansible.module_utils.basic import AnsibleModule
 
 def run_module():
@@ -83,29 +81,29 @@ def run_module():
         supports_check_mode=True
     )
 
-    os.chdir(module.params['dir'])
     #checkmode just responds with git secret whoknows
     if module.check_mode:
-        stream = os.popen('git secret whoknows') 
-        result['message'] = stream.read()
+        r = module.run_command('git secret whoknows', cwd=module.params['dir'])
+        result['message'] = r
         module.exit_json(**result)
 
     #validate inputs
     #TODO can we do this in a more elegant way (an enum of potential values or something?)
+    #TODO should this happen before the above checkmode logic?
     if module.params['action'] != 'encrypt' and module.params['action'] != 'decrypt':
         module.fail_json(msg="action must be 'encrypt' or 'decrypt'", **result)
 
     # was not check mode, attempt to encrypt or decrypt based on action
     result['changed'] = True
     if module.params['action'] == 'encrypt':
-        stream = os.popen('git secret hide') 
-        result['message'] = stream.read()   
+        r = module.run_command('git secret hide', cwd=module.params['dir'])
+        result['message'] = r 
     if module.params['action'] == 'decrypt':
         cmd = 'git secret reveal -f'
         if module.params['passphrase']:
             cmd += ' -p ' + module.params['passphrase']
-        stream = os.popen(cmd) 
-        result['message'] = stream.read()         
+        r = module.run_command(cmd, cwd=module.params['dir'])
+        result['message'] = r      
     
     # return results (success)
     module.exit_json(**result)

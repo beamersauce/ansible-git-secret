@@ -1,9 +1,18 @@
+# host machine requirements
+
+1. git secret - https://git-secret.io/git-secret-reveal
+2. gnupg2 (gpg) - https://gnupg.org/
+
+# to install this module
+
+1. create a directory on your computer for ansible modules: `mkdir -p ~/.ansible/plugins/modules`
+2. copy the module code into that directory: `cp gitsecret.py ~/.ansible/plugins/modules/gitsecret.py`
+
 # to setup dev env
 
-1. follow setup in https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html
-    1. to get it working I had to remove the ansible/venv/lib/python3.6/site-package/MarkupSafe-* dir during the step `pip isntall -r requirements.txt` and then rerun that command
-2. from then on you only need to run
-    1. `. venv/bin/activate`
-    2. `. hacking/env-setup`
-3. I may need to adapt these instructions when I move the module out of the ansible proj
-4. To run a test you can run `ansible-playbook test.yaml -v`
+There might be better ways to manage this, https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html goes into further detail but an easy way to just 'run your code live' is:
+
+1. create a directory on your computer for modules: `mkdir -p ~/.ansible/plugins/modules`
+2. create a symlink for the module code into that directory: `ln -s gitsecret.py ~/.ansible/plugins/modules/gitsecret.py`
+3. To run a test you can run `ansible-playbook test.yaml -v`
+

@@ -65,10 +65,10 @@ from ansible.module_utils.basic import AnsibleModule
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
-        action=dict(type='str', required=True),
+        action=dict(type='str', required=True, choices=['encrypt','decrypt']),
         dir=dict(type='str', required=True),
         private_key=dict(type='str', required=False),
-        passphrase=dict(type='str', required=False)
+        passphrase=dict(type='str', required=False, no_log=True)
     )
 
     result = dict(
@@ -87,12 +87,6 @@ def run_module():
         result['message'] = r
         module.exit_json(**result)
 
-    #validate inputs
-    #TODO can we do this in a more elegant way (an enum of potential values or something?)
-    #TODO should this happen before the above checkmode logic?
-    if module.params['action'] != 'encrypt' and module.params['action'] != 'decrypt':
-        module.fail_json(msg="action must be 'encrypt' or 'decrypt'", **result)
-
     # was not check mode, attempt to encrypt or decrypt based on action
     result['changed'] = True
     if module.params['action'] == 'encrypt':
@@ -110,7 +104,6 @@ def run_module():
 
     #TODO - update the docs
     #TODO - how to handle verbosity
-    #TODO - how to hide passphrase from any output (can I mark it as a secure value or something in the input dict)
 
 def main():
     run_module()

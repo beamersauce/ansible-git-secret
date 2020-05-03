@@ -8,6 +8,10 @@
 1. create a directory on your computer for ansible modules: `mkdir -p ~/.ansible/plugins/modules`
 2. copy the module code into that directory: `cp gitsecret.py ~/.ansible/plugins/modules/gitsecret.py`
 
+# to see ansible docs
+
+`ansible-doc gitsecret`
+
 # to setup dev env
 
 There might be better ways to manage this, https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html goes into further detail but an easy way to just 'run your code live' is:

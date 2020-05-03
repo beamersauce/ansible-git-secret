@@ -1,0 +1,15 @@
+- name: test set-version module
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - debug:
+        msg: 'hi'
+
+    - name: test1
+      command: echo hi
+
+    - name: test
+      set-version:
+        name: yo
+      register: a

@@ -22,9 +22,17 @@ options:
         description:
             - Which action to perform, encrypt or decrypt
         required: true
+    dir:
+        description:
+            - Which directory to perform the git secret commands in, must be `git init` and `git secret init` prior to running this task
+        required: true
     private_key:
         description:
             - Path to private GPG key to import to keychain, if not specified will just use keychain as is.
+        required: false
+    passphrase:
+        description:
+            - (decrypt only) Passphrase for the GPG used to decrypt, will be passed on the CLI to the git secret command
         required: false
 
 author:
@@ -32,30 +40,25 @@ author:
 '''
 
 EXAMPLES = '''
-# Pass in a message
-- name: Test with a message
-  my_test:
-    name: hello world
+# Encrypt a directory
+- name: encrypt w/ unused passphrase var filled in
+  gitsecret:
+    action: encrypt
+    dir: /tmp/gitsectest
+    private_key: caleb_pri.gpg
 
-# pass in a message and have changed true
-- name: Test with a message and changed output
-  my_test:
-    name: hello world
-    new: true
-
-# fail the module
-- name: Test failure of the module
-  my_test:
-    name: fail me
+# Decrypt a directory with supplied passphrase
+- name: decrypt (passphrase supplied via task)
+  gitsecret:
+    action: decrypt
+    dir: /tmp/gitsectest
+    private_key: caleb_pri.gpg
+    passphrase: '123qwe'
 '''
 
 RETURN = '''
-original_message:
-    description: The original name param that was passed in
-    type: str
-    returned: always
 message:
-    description: The output message that the test module generates
+    description: The output of the git secret command
     type: str
     returned: always
 '''
@@ -102,7 +105,6 @@ def run_module():
     # return results (success)
     module.exit_json(**result)
 
-    #TODO - update the docs
     #TODO - how to handle verbosity
 
 def main():

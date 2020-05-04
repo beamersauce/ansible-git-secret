@@ -105,8 +105,6 @@ def run_module():
     # return results (success)
     module.exit_json(**result)
 
-    #TODO - how to handle verbosity
-
 def main():
     run_module()
 
